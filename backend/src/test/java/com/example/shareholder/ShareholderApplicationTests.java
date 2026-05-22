@@ -10,4 +10,10 @@ class ShareholderApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void should_StartApplication_When_MainIsCalled() {
+		// Domain: the application entry-point must initialise the Spring context without errors
+		ShareholderApplication.main(new String[]{"--server.port=0"});
+	}
+
 }

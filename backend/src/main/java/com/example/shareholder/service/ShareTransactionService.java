@@ -1,6 +1,5 @@
 package com.example.shareholder.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,20 +17,23 @@ import com.example.shareholder.repository.ShareTransactionRepository;
 @Service
 public class ShareTransactionService {
 
-  @Autowired
-  private ShareTransactionRepository shareTransactionRepository;
+  private final ShareTransactionRepository shareTransactionRepository;
+  private final PersonRepository personRepository;
+  private final SharePriceRepository sharePriceRepository;
+  private final ShareOwnershipService shareOwnershipService;
+  private final OwnerPercentageCalculator ownerShiPercentageCalculator;
 
-  @Autowired
-  private PersonRepository personRepository;
-
-  @Autowired
-  private SharePriceRepository sharePriceRepository;
-
-  @Autowired
-  private ShareOwnershipService shareOwnershipService;
-
-  @Autowired
-  private OwnerPercentageCalculator ownerShiPercentageCalculator;
+  public ShareTransactionService(ShareTransactionRepository shareTransactionRepository,
+                                  PersonRepository personRepository,
+                                  SharePriceRepository sharePriceRepository,
+                                  ShareOwnershipService shareOwnershipService,
+                                  OwnerPercentageCalculator ownerShiPercentageCalculator) {
+    this.shareTransactionRepository = shareTransactionRepository;
+    this.personRepository = personRepository;
+    this.sharePriceRepository = sharePriceRepository;
+    this.shareOwnershipService = shareOwnershipService;
+    this.ownerShiPercentageCalculator = ownerShiPercentageCalculator;
+  }
 
   public List<ShareTransaction> getShareTransactions() {
     return shareTransactionRepository.findAll();
@@ -154,6 +156,7 @@ public class ShareTransactionService {
             && !shareTransaction.getStatus().equals("rejected"))) {
       throw new IllegalArgumentException("Status on pakollinen, käytä 'pending', 'approved' tai 'rejected'");
     }
+    existingShareTransaction.setStatus(shareTransaction.getStatus());
 
     BigDecimal numberOfShares = BigDecimal.valueOf(existingShareTransaction.getNumberOfShares());
     existingShareTransaction.setTotalAmount(numberOfShares.multiply(existingShareTransaction.getPricePerShare()));

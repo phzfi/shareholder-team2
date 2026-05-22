@@ -1,7 +1,6 @@
 package com.example.shareholder.service;
 
 import java.math.RoundingMode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
@@ -12,8 +11,11 @@ import com.example.shareholder.repository.PersonRepository;
 @Service
 public class OwnerPercentageCalculator {
 
-  @Autowired
-  private PersonRepository personRepository;
+  private final PersonRepository personRepository;
+
+  public OwnerPercentageCalculator(PersonRepository personRepository) {
+    this.personRepository = personRepository;
+  }
 
   public void updateAllOwnershipPercentages() {
     List<Person> allPersons = personRepository.findAll();

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 import com.example.shareholder.model.SharePrice;
@@ -16,11 +15,14 @@ import com.example.shareholder.repository.SharePriceRepository;
 @Service
 public class SharePriceService {
 
-  @Autowired
-  private SharePriceRepository sharePriceRepository;
+  private final SharePriceRepository sharePriceRepository;
+  private final SharePriceDifferenceCalculator sharePriceDifferenceCalculator;
 
-  @Autowired
-  private SharePriceDifferenceCalculator sharePriceDifferenceCalculator;
+  public SharePriceService(SharePriceRepository sharePriceRepository,
+                            SharePriceDifferenceCalculator sharePriceDifferenceCalculator) {
+    this.sharePriceRepository = sharePriceRepository;
+    this.sharePriceDifferenceCalculator = sharePriceDifferenceCalculator;
+  }
 
   public Iterable<SharePrice> getAllSharePrices() {
     return sharePriceRepository.findAll();

@@ -1,6 +1,5 @@
 package com.example.shareholder.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,17 +10,20 @@ import com.example.shareholder.repository.PersonRepository;
 @Service
 public class PersonService {
 
-    @Autowired
-    private PersonRepository personRepository;
+    private final PersonRepository personRepository;
+    private final ShareOwnershipService shareOwnershipService;
+    private final ShareCountTotalService shareCountTotalService;
+    private final OwnerPercentageCalculator ownerPercentageCalculator;
 
-    @Autowired
-    private ShareOwnershipService shareOwnershipService;
-
-    @Autowired
-    private ShareCountTotalService shareCountTotalService;
-
-    @Autowired
-    private OwnerPercentageCalculator ownerPercentageCalculator;
+    public PersonService(PersonRepository personRepository,
+                         ShareOwnershipService shareOwnershipService,
+                         ShareCountTotalService shareCountTotalService,
+                         OwnerPercentageCalculator ownerPercentageCalculator) {
+        this.personRepository = personRepository;
+        this.shareOwnershipService = shareOwnershipService;
+        this.shareCountTotalService = shareCountTotalService;
+        this.ownerPercentageCalculator = ownerPercentageCalculator;
+    }
 
     public List<Person> getPersons() {
         return personRepository.findAll();
@@ -62,6 +64,8 @@ public class PersonService {
         Person existingPerson = personRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Henkilöä ei löytynyt " + id));
 
+        Integer previousShares = existingPerson.getNumberOfShares();
+
         existingPerson.setFirstname(person.getFirstname());
         existingPerson.setLastname(person.getLastname());
         existingPerson.setEmail(person.getEmail());
@@ -77,11 +81,10 @@ public class PersonService {
         } else {
             existingPerson.setSsn(person.getSsn());
         }
-        
 
         Person newPerson = personRepository.save(existingPerson);
 
-        if (!existingPerson.getNumberOfShares().equals(person.getNumberOfShares())) {
+        if (!previousShares.equals(person.getNumberOfShares())) {
             ownerPercentageCalculator.updateAllOwnershipPercentages();
         }
         shareCountTotalService.addTotalShareCount(person.getNumberOfShares());

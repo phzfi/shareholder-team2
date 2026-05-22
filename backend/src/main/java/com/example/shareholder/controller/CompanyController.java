@@ -1,6 +1,5 @@
 package com.example.shareholder.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,8 +11,11 @@ import com.example.shareholder.service.CompanyService;
 @RequestMapping("/api/company")
 public class CompanyController {
 
-    @Autowired
-    private CompanyService companyService;
+    private final CompanyService companyService;
+
+    public CompanyController(CompanyService companyService) {
+        this.companyService = companyService;
+    }
 
     @GetMapping()
     public ResponseEntity<Company> getCompanyById() {

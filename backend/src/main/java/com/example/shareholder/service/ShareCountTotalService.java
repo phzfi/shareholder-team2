@@ -1,6 +1,5 @@
 package com.example.shareholder.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
 
@@ -10,8 +9,11 @@ import com.example.shareholder.repository.ShareCountTotalRepository;
 @Service
 public class ShareCountTotalService {
 
-  @Autowired
-  private ShareCountTotalRepository shareCountTotalRepository;
+  private final ShareCountTotalRepository shareCountTotalRepository;
+
+  public ShareCountTotalService(ShareCountTotalRepository shareCountTotalRepository) {
+    this.shareCountTotalRepository = shareCountTotalRepository;
+  }
 
   public List<ShareCountTotal> getAllTotalCounts() {
     return shareCountTotalRepository.findAll();

@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import java.util.List;
 import com.example.shareholder.model.ShareTransaction;
@@ -16,8 +15,11 @@ import com.example.shareholder.service.ShareTransactionService;
 @RequestMapping("/api/sharetransactionstatus")
 public class ShareTransactionStatusController {
 
-  @Autowired
-  private ShareTransactionService shareTransactionService;
+  private final ShareTransactionService shareTransactionService;
+
+  public ShareTransactionStatusController(ShareTransactionService shareTransactionService) {
+    this.shareTransactionService = shareTransactionService;
+  }
 
   // 'pending', 'approved', 'rejected'
   @GetMapping("/{status}")

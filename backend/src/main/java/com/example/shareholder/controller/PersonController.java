@@ -1,6 +1,5 @@
 package com.example.shareholder.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -13,8 +12,11 @@ import com.example.shareholder.service.PersonService;
 @RequestMapping("/api/persons")
 public class PersonController {
 
-    @Autowired
-    private PersonService personService;
+    private final PersonService personService;
+
+    public PersonController(PersonService personService) {
+        this.personService = personService;
+    }
 
     @GetMapping
     public ResponseEntity<List<Person>> getPersons() {

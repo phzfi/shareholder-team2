@@ -7,18 +7,20 @@ import com.example.shareholder.model.ShareOwnership;
 import com.example.shareholder.model.ShareTransaction;
 import com.example.shareholder.repository.PersonRepository;
 import com.example.shareholder.repository.ShareOwnershipRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
 @Service
 public class ShareOwnershipService {
 
-  @Autowired
-  private ShareOwnershipRepository shareOwnershipRepository;
+  private final ShareOwnershipRepository shareOwnershipRepository;
+  private final PersonRepository personRepository;
 
-  @Autowired
-  private PersonRepository personRepository;
+  public ShareOwnershipService(ShareOwnershipRepository shareOwnershipRepository,
+                                PersonRepository personRepository) {
+    this.shareOwnershipRepository = shareOwnershipRepository;
+    this.personRepository = personRepository;
+  }
 
   public List<ShareOwnership> getAllShareOwnerships() {
     return shareOwnershipRepository.findAll();

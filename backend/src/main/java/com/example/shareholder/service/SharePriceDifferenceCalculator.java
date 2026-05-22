@@ -3,7 +3,6 @@ package com.example.shareholder.service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.shareholder.model.SharePrice;
 import com.example.shareholder.repository.SharePriceRepository;
@@ -11,8 +10,11 @@ import com.example.shareholder.repository.SharePriceRepository;
 @Service
 public class SharePriceDifferenceCalculator {
 
-  @Autowired
-  private SharePriceRepository sharePriceRepository;
+  private final SharePriceRepository sharePriceRepository;
+
+  public SharePriceDifferenceCalculator(SharePriceRepository sharePriceRepository) {
+    this.sharePriceRepository = sharePriceRepository;
+  }
 
   public BigDecimal calculateDifference(SharePrice newSharePrice) {
     Optional<SharePrice> sharePriceOptional = sharePriceRepository.findFirstByOrderByIdDesc();

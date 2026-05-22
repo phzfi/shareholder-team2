@@ -1,6 +1,5 @@
 package com.example.shareholder.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -23,14 +22,17 @@ import jakarta.servlet.http.HttpServletResponse;
 @RequestMapping("/api/report")
 public class ReportController {
 
-    @Autowired
-    private ReportService reportService;
+    private final ReportService reportService;
+    private final PersonRepository personRepository;
+    private final ShareTransactionService shareTransactionService;
 
-    @Autowired
-    private PersonRepository personRepository;
-
-    @Autowired
-    private ShareTransactionService shareTransactionService;
+    public ReportController(ReportService reportService,
+                             PersonRepository personRepository,
+                             ShareTransactionService shareTransactionService) {
+        this.reportService = reportService;
+        this.personRepository = personRepository;
+        this.shareTransactionService = shareTransactionService;
+    }
     
     @GetMapping("/persons")
     public void exportPersonsToExcel(HttpServletResponse response) throws IOException {

@@ -2,7 +2,6 @@ package com.example.shareholder.util;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,14 +20,17 @@ import com.example.shareholder.service.ShareTransactionService;
 @RequestMapping("/api/add-multiple-entities")
 public class AddMultipleEntities {
 
-  @Autowired
-  private PersonService personService;
+  private final PersonService personService;
+  private final ShareTransactionService shareholderService;
+  private final SharePriceService sharePriceService;
 
-  @Autowired
-  private ShareTransactionService shareholderService;
-
-  @Autowired
-  private SharePriceService sharePriceService;
+  public AddMultipleEntities(PersonService personService,
+                             ShareTransactionService shareholderService,
+                             SharePriceService sharePriceService) {
+    this.personService = personService;
+    this.shareholderService = shareholderService;
+    this.sharePriceService = sharePriceService;
+  }
   
   @PostMapping("/persons")
   public void addMultiplePersons(@RequestBody List<Person> persons) {

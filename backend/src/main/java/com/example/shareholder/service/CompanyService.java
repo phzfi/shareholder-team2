@@ -1,6 +1,5 @@
 package com.example.shareholder.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 import com.example.shareholder.model.Company;
@@ -9,8 +8,11 @@ import com.example.shareholder.repository.CompanyRepository;
 @Service
 public class CompanyService {
 
-    @Autowired
-    private CompanyRepository companyRepository;
+    private final CompanyRepository companyRepository;
+
+    public CompanyService(CompanyRepository companyRepository) {
+        this.companyRepository = companyRepository;
+    }
 
     public Company getCompany() {
         return companyRepository.findById(1L)
