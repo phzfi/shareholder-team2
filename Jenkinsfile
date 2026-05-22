@@ -22,6 +22,7 @@ pipeline {
     ansiColor('xterm')
     //set default pipeline timeout to 3hours if there is a jam, it will abort automatically
     timeout(time: 180, unit: 'MINUTES')
+    buildDiscarder(logRotator(numToKeepStr: '50'))
   }
 
   triggers {
@@ -32,8 +33,6 @@ pipeline {
   stages {
     stage("Prepare") {
       steps {
-        // Workaround to the clean issue, can't delete folder as folder is owned by docker user 'root'.
-        sh "sudo chown -R jenkins:jenkins ${workspace}"
         //prevent Jenkins wrong branch checkout failure
         //see https://stackoverflow.com/questions/44928459/is-it-possible-to-rename-default-declarative-checkout-scm-step
         checkout scm
@@ -98,7 +97,7 @@ pipeline {
       steps {
         echo "TODO: Please add a task to implement CI-7 https://wiki.phz.fi/NonFunctionalRequirements#CI"
         //sh "docker-compose run app yarn test-ci"
-        //junit 'results/*.xml'
+        junit allowEmptyResults: true, testResults: '**/results/*.xml'
         step([
             $class: 'CloverPublisher',
             cloverReportDir: 'reports/coverage',
@@ -180,9 +179,8 @@ pipeline {
         if (getContext(hudson.FilePath)) {
           sh "./clean.sh > /dev/null 2>&1 || true"
         }
-      }
-      script {
-        sh "./down.sh > /dev/null 2>&1 || true"
+        // Workaround to the clean issue, can't delete folder as folder is owned by docker user 'root'.
+        sh "sudo chown -R jenkins:jenkins ${workspace}"
       }
     }
 
@@ -196,6 +194,9 @@ pipeline {
           <p>${CHANGELOG}""",
         recipientProviders: [[$class: 'DevelopersRecipientProvider']]
       )
+      script {
+        sh "./down.sh > /dev/null 2>&1 || true"
+      }
     }
 
     unstable {
@@ -208,6 +209,11 @@ pipeline {
           <p>${CHANGELOG}""",
         recipientProviders: [[$class: 'DevelopersRecipientProvider']]
       )
+
+      script {
+        echo "Preserving env for debugging. Use vagrant up/docker-compose unpause to debug"
+        sh "./down.sh pause-for-debugging > /dev/null 2>&1 || true"
+      }
     }
 
     failure {
@@ -220,6 +226,11 @@ pipeline {
           <p>${CHANGELOG}""",
         recipientProviders: [[$class: 'DevelopersRecipientProvider']]
       )
+
+      script {
+        echo "Preserving env for debugging. Use vagrant up/docker-compose unpause to debug"
+        sh "./down.sh pause-for-debugging > /dev/null 2>&1 || true"
+      }
     }
   }
 }

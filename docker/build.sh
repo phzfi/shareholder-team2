@@ -34,7 +34,7 @@ echo $BUILD_ENV-$VERSION > ../VERSION
 if test "$BUILD_ENV" != "dev"; then
     docker login docker-registry-in.phz.fi -u $DOCKER_REGISTRY_USERNAME -p $DOCKER_REGISTRY_PASSWORD
 fi
-docker build -f Dockerfile --no-cache --build-arg BUILD_ENV="$BUILD_ENV" -t $TAG .
+docker build -f Dockerfile --no-cache --build-arg BUILD_ENV="$BUILD_ENV" -t $TAG . || exit $?
 
 
 # We don't want to push dev images to registry, just test if building works
@@ -47,7 +47,7 @@ fi
 
 if test "$BUILD_ENV" == "prod"; then
     echo "Tagging and pushing $NAME:latest for prod"
-    docker tag "$TAG" docker-registry-in.phz.fi/"$NAME":latest \
-      && docker push docker-registry-in.phz.fi/$NAME:latest
+    docker tag "$TAG" docker-registry-in.phz.fi/"$GROUP"/"$NAME":latest \
+      && docker push docker-registry-in.phz.fi/"$GROUP"/"$NAME":latest
 fi
 
